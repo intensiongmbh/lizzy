@@ -23,5 +23,6 @@
   <modules>
     <module>lizzy-converter</module>
     <module>lizzy-adapter</module>
+    <module>lizzy-eclipse</module>
   </modules>
 </project>
