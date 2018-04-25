@@ -1,1 +1,1 @@
-Hi, I,m Lizzy and I'm not a Gecko!
+Hi, I'm Lizzy and I'm not a Gecko!
