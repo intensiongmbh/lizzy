@@ -1,0 +1,6 @@
+feature_build_stable:
+ stage: test
+ script:
+  - mvn clean test
+ tags:
+  - java8
