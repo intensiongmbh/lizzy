@@ -17,7 +17,7 @@ public class GherkinConverter
 
     private String     location     = "src/test/java";
     private String     packageName;
-    private CaseFormat methodFormat = CaseFormat.UNDERSCORE_CASE;
+    private CaseFormat methodFormat = CaseFormat.SNAKE_CASE;
 
     /**
      * Converts a gherkin string to a java test class.
@@ -71,7 +71,7 @@ public class GherkinConverter
 
     /**
      * Use this format to determine whether the method names
-     * should be generated in underscore or camel case.
+     * should be generated in snake or camel case.
      *
      * @see CaseFormat
      */

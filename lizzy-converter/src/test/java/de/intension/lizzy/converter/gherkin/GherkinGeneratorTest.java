@@ -1,7 +1,7 @@
 package de.intension.lizzy.converter.gherkin;
 
 import static de.intension.lizzy.converter.CaseFormat.CAMEL_CASE;
-import static de.intension.lizzy.converter.CaseFormat.UNDERSCORE_CASE;
+import static de.intension.lizzy.converter.CaseFormat.SNAKE_CASE;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -64,18 +64,18 @@ public class GherkinGeneratorTest
     /**
      * GIVEN Valid gherkin feature object with a scenario
      * WHEN generating it to a java file
-     * THEN the generated test method has a name in underscore format.
+     * THEN the generated test method has a name in snake case.
      */
     @Test
-    public void should_generate_method_name_in_underscore_case()
+    public void should_generate_method_name_in_snake_case()
         throws ParseException
     {
-        Feature feature = GherkinParser.parseFeature(GherkinParserTest.TEST_FEATURE.replace("Scenario 1", "This is underscore case"));
+        Feature feature = GherkinParser.parseFeature(GherkinParserTest.TEST_FEATURE.replace("Scenario 1", "This is snake case"));
 
-        JavaFile javaFile = GherkinGenerator.generate(feature, "lizzy.generator", UNDERSCORE_CASE);
+        JavaFile javaFile = GherkinGenerator.generate(feature, "lizzy.generator", SNAKE_CASE);
 
         MethodSpec method = javaFile.typeSpec.methodSpecs.get(0);
-        assertThat(method.name, equalTo("this_is_underscore_case"));
+        assertThat(method.name, equalTo("this_is_snake_case"));
     }
 
     /**
@@ -108,7 +108,7 @@ public class GherkinGeneratorTest
                 "Scenario: Should be a method\n";
         Feature feature = GherkinParser.parseFeature(gherkin);
 
-        JavaFile javaFile = GherkinGenerator.generate(feature, "lizzy.generator", UNDERSCORE_CASE);
+        JavaFile javaFile = GherkinGenerator.generate(feature, "lizzy.generator", SNAKE_CASE);
 
         TypeSpec testClass = javaFile.typeSpec;
         assertThat(testClass.javadoc.toString(), isEmptyOrNullString());

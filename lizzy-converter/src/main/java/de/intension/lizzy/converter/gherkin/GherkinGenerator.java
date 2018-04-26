@@ -43,7 +43,7 @@ import gherkin.ast.Step;
  * </pre>
  *
  * generates the following code when calling {@link #generate(Feature, String, CaseFormat)}
- * with methodFormat={@link CaseFormat#UNDERSCORE_CASE}:
+ * with methodFormat={@link CaseFormat#SNAKE_CASE}:
  *
  * <pre>
  * <code>
@@ -79,7 +79,7 @@ public class GherkinGenerator
      * @param feature The feature to be processed
      * @param packageName The package name of the class to generate
      * @param methodFormat Use this format to determine whether the method name
-     *            should be generated in underscore or camel case
+     *            should be generated in snake or camel case
      * @return The generated java file object
      */
     public static JavaFile generate(Feature feature, String packageName, CaseFormat methodFormat)
@@ -109,7 +109,7 @@ public class GherkinGenerator
      * <ul>
      * e.g. 'This is a string' gets formatted to:
      * <li>Camel case: 'thisIsAString'
-     * <li>Underscore case: 'this_is_a_string'
+     * <li>Snake case: 'this_is_a_string'
      * </ul>
      */
     private static String format(String string, CaseFormat format)
@@ -117,8 +117,8 @@ public class GherkinGenerator
         switch (format) {
         case CAMEL_CASE:
             return new CamelCaseStringConverter().map(string);
-        case UNDERSCORE_CASE:
-            return string.substring(0, 1).toLowerCase() + string.substring(1).replace(' ', '_');
+        case SNAKE_CASE:
+            return string.toLowerCase().replace(' ', '_');
         default:
             throw new IllegalStateException("Unknown case format '" + format + "'.");
         }
