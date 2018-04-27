@@ -1,6 +1,6 @@
 package de.intension.lizzy.converter.gherkin;
 
-import static de.intension.lizzy.converter.CaseFormat.UNDERSCORE_CASE;
+import static de.intension.lizzy.converter.CaseFormat.SNAKE_CASE;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -98,7 +98,7 @@ public class GherkinConverterTest
         PowerMockito.when(GherkinParser.parseFeature(null)).thenReturn(feature);
         PowerMockito.mockStatic(GherkinGenerator.class);
         JavaFile javaFile = JavaFile.builder(this.getClass().getPackage().getName(), TypeSpec.classBuilder("TestClassName").build()).build();
-        PowerMockito.when(GherkinGenerator.generate(feature, null, UNDERSCORE_CASE)).thenReturn(javaFile);
+        PowerMockito.when(GherkinGenerator.generate(feature, null, SNAKE_CASE)).thenReturn(javaFile);
     }
 
     /**
@@ -110,7 +110,7 @@ public class GherkinConverterTest
         PowerMockito.mockStatic(GherkinParser.class);
         PowerMockito.when(GherkinParser.parseFeature(string)).thenReturn(feature);
         PowerMockito.mockStatic(GherkinGenerator.class);
-        PowerMockito.when(GherkinGenerator.generate(feature, null, UNDERSCORE_CASE)).thenThrow(new RuntimeException(string));
+        PowerMockito.when(GherkinGenerator.generate(feature, null, SNAKE_CASE)).thenThrow(new RuntimeException(string));
     }
 
     /**

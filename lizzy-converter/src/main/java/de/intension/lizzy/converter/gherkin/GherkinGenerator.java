@@ -1,5 +1,7 @@
 package de.intension.lizzy.converter.gherkin;
 
+import java.util.function.Consumer;
+
 import javax.lang.model.element.Modifier;
 
 import org.junit.Test;
@@ -43,7 +45,7 @@ import gherkin.ast.Step;
  * </pre>
  *
  * generates the following code when calling {@link #generate(Feature, String, CaseFormat)}
- * with methodFormat={@link CaseFormat#UNDERSCORE_CASE}:
+ * with methodFormat={@link CaseFormat#SNAKE_CASE}:
  *
  * <pre>
  * <code>
@@ -79,29 +81,45 @@ public class GherkinGenerator
      * @param feature The feature to be processed
      * @param packageName The package name of the class to generate
      * @param methodFormat Use this format to determine whether the method name
-     *            should be generated in underscore or camel case
+     *            should be generated in snake or camel case
      * @return The generated java file object
      */
     public static JavaFile generate(Feature feature, String packageName, CaseFormat methodFormat)
     {
-        String className = formatClassName(feature.getName());
+        String className = prepare(formatClassName(feature.getName()), true);
         TypeSpec.Builder testClass = TypeSpec.classBuilder(className)
             .addModifiers(Modifier.PUBLIC);
         String javaDoc = feature.getDescription();
         if ((javaDoc != null) && !javaDoc.isEmpty()) {
             testClass.addJavadoc(javaDoc);
         }
-        for (ScenarioDefinition scenario : feature.getChildren()) {
-            String methodName = format(scenario.getName(), methodFormat);
+        feature.getChildren().forEach(generateMethods(testClass, methodFormat));
+        return JavaFile.builder(packageName, testClass.build()).build();
+    }
+
+    /**
+     * Generates the methods name and java documentation based on the scenario.
+     */
+    private static Consumer<? super ScenarioDefinition> generateMethods(TypeSpec.Builder testClass, CaseFormat methodFormat)
+    {
+        return scenario -> {
+            String methodName = prepare(format(scenario.getName(), methodFormat), false);
             MethodSpec.Builder method = MethodSpec.methodBuilder(methodName)
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Test.class);
-            for (Step step : scenario.getSteps()) {
-                method.addJavadoc(step.getKeyword() + step.getText() + "\n");
-            }
+            scenario.getSteps().forEach(addJavadocTo(method));
             testClass.addMethod(method.build());
-        }
-        return JavaFile.builder(packageName, testClass.build()).build();
+        };
+    }
+
+    /**
+     * Adds java documentation based on the scenarios steps.
+     */
+    private static Consumer<? super Step> addJavadocTo(MethodSpec.Builder method)
+    {
+        return step -> {
+            method.addJavadoc(step.getKeyword() + step.getText() + "\n");
+        };
     }
 
     /**
@@ -109,7 +127,7 @@ public class GherkinGenerator
      * <ul>
      * e.g. 'This is a string' gets formatted to:
      * <li>Camel case: 'thisIsAString'
-     * <li>Underscore case: 'this_is_a_string'
+     * <li>Snake case: 'this_is_a_string'
      * </ul>
      */
     private static String format(String string, CaseFormat format)
@@ -117,11 +135,33 @@ public class GherkinGenerator
         switch (format) {
         case CAMEL_CASE:
             return new CamelCaseStringConverter().map(string);
-        case UNDERSCORE_CASE:
-            return string.substring(0, 1).toLowerCase() + string.substring(1).replace(' ', '_');
+        case SNAKE_CASE:
+            return string.toLowerCase().replace(' ', '_');
         default:
             throw new IllegalStateException("Unknown case format '" + format + "'.");
         }
+    }
+
+    /**
+     * Removes all prohibited characters from the class or method name.
+     * 
+     * @param string The unformatted string to represent the class or method name.
+     * @see https://docs.oracle.com/javase/specs/
+     */
+    private static String prepare(String string, boolean isClass)
+    {
+        String result = string.replaceAll("[^\\w$']+", "").replaceAll("^\\d+", "");
+        return isClass ? result : decapitalize(result);
+    }
+
+    /**
+     * Decapitalizes the first character of a string.
+     */
+    private static String decapitalize(String string)
+    {
+        char c[] = string.toCharArray();
+        c[0] = Character.toLowerCase(c[0]);
+        return new String(c);
     }
 
     /**

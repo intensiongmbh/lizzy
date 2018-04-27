@@ -8,8 +8,8 @@ public enum CaseFormat
      */
     CAMEL_CASE,
     /**
-     * Underscore format.
-     * e.g. 'this_is_underscore_case'
+     * Snake format.
+     * e.g. 'this_is_snake_case'
      */
-    UNDERSCORE_CASE;
+    SNAKE_CASE;
 }
