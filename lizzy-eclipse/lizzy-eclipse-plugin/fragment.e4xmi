@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="ASCII"?>
 <fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_BxaXACerEeWxCPrV0pAZQQ">
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_EI7oACerEeWxCPrV0pAZQQ" featurename="descriptors" parentElementId="xpath:/">
-    <elements xsi:type="basic:PartDescriptor" xmi:id="_KMklcCerEeWxCPrV0pAZQQ" elementId="test.partDescFragment.ASampleE4View" label="Search ticket" iconURI="platform:/plugin/lizzy-eclipse-plugin/icons/Sample.png" tooltip="" category="Lizzy" contributionURI="bundleclass://lizzy-eclipse-plugin/de.intension.lizzy.plugin.parts.SearchView">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_KMklcCerEeWxCPrV0pAZQQ" elementId="lizzy-eclipse-plugin.partdescriptor.searchticket" label="Search ticket" iconURI="platform:/plugin/lizzy-eclipse-plugin/icons/Sample.png" tooltip="" category="Lizzy" contributionURI="bundleclass://lizzy-eclipse-plugin/de.intension.lizzy.plugin.parts.SearchView">
+      <tags>View</tags>
+      <tags>categoryTag:Lizzy</tags>
+    </elements>
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_oocKgEn-Eeiw7prQfljz3A" elementId="lizzy-eclipse-plugin.partdescriptor.displayticket" label="Display ticket" iconURI="platform:/plugin/lizzy-eclipse-plugin/icons/Sample.png" category="Lizzy" contributionURI="bundleclass://lizzy-eclipse-plugin/de.intension.lizzy.plugin.parts.DisplayView">
       <tags>View</tags>
       <tags>categoryTag:Lizzy</tags>
     </elements>
