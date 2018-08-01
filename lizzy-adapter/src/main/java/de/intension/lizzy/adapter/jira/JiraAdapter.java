@@ -8,7 +8,9 @@ import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClientFactory;
 import com.atlassian.jira.rest.client.api.domain.Attachment;
 import com.atlassian.jira.rest.client.api.domain.Issue;
+import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
+import com.atlassian.util.concurrent.Promise;
 
 /**
  * Adapter for the Jira Rest API.
@@ -69,6 +71,18 @@ public class JiraAdapter
         throws InterruptedException, ExecutionException
     {
         return getJiraClient().getIssueClient().getIssue(ticketId).get();
+    }
+
+    /**
+     * Retrieves a issues via a filter string.
+     *
+     * @param filter Jql filter string.
+     * @param maxResult Maximum number of issues to be returned.
+     */
+    public Iterable<Issue> getIssues(String filter, int maxResult)
+    {
+        Promise<SearchResult> searchResult = getJiraClient().getSearchClient().searchJql(filter, maxResult, 0, null);
+        return searchResult.claim().getIssues();
     }
 
     /**
