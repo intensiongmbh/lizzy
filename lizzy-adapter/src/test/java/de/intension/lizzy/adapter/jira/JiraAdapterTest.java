@@ -1,10 +1,12 @@
 package de.intension.lizzy.adapter.jira;
 
 import static com.atlassian.fugue.Iterables.iterable;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.iterableWithSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -25,19 +27,22 @@ import com.atlassian.jira.rest.client.api.IssueRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClientFactory;
 import com.atlassian.jira.rest.client.api.RestClientException;
+import com.atlassian.jira.rest.client.api.SearchRestClient;
 import com.atlassian.jira.rest.client.api.domain.Attachment;
 import com.atlassian.jira.rest.client.api.domain.Issue;
+import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.atlassian.util.concurrent.Promise;
 
 public class JiraAdapterTest
 {
 
-    private static final String URI         = "https://hub.intension.de/";
-    private static final String USERNAME    = "user123";
-    private static final String PASSWORD    = "Password123!";
-    private static final String TICKET_ID   = "LIZZY-123";
-    private static final String TICKET_DESC = "test description";
+    private static final String URI          = "https://hub.intension.de/";
+    private static final String USERNAME     = "user123";
+    private static final String PASSWORD     = "Password123!";
+    private static final String TICKET_ID    = "LIZZY-123";
+    private static final String TICKET_DESC  = "test description";
+    private static final String VALID_FILTER = "id = LIZZY-1";
 
     /**
      * GIVEN Jira adapter with valid credentials
@@ -113,6 +118,38 @@ public class JiraAdapterTest
     }
 
     /**
+     * GIVEN Jira adapter with valid credentials
+     * WHEN requesting ticket via filter string
+     * THEN matching tickets are returned
+     */
+    @Test
+    public void should_return_tickets_for_matching_filter()
+        throws Exception
+    {
+        JiraAdapter adapter = new JiraAdapter(URI, USERNAME, PASSWORD).setFactory(setupFactory());
+
+        Iterable<Issue> issues = adapter.getIssues(VALID_FILTER, 10);
+
+        assertThat(issues, contains(hasProperty("description", equalTo(TICKET_DESC))));
+    }
+
+    /**
+     * GIVEN Jira adapter with valid credentials
+     * WHEN requesting ticket via filter string for non existent ticket
+     * THEN no tickets are returned in the searchresult
+     */
+    @Test
+    public void should_not_return_tickets_for_non_matching_filter()
+        throws Exception
+    {
+        JiraAdapter adapter = new JiraAdapter(URI, USERNAME, PASSWORD).setFactory(setupFactory());
+
+        Iterable<Issue> issues = adapter.getIssues("id = FAIL-1", 10);
+
+        assertThat(issues, iterableWithSize(0));
+    }
+
+    /**
      * Setup a {@link JiraRestClientFactory} mock.
      */
     @SuppressWarnings("unchecked")
@@ -140,6 +177,20 @@ public class JiraAdapterTest
         when(attachment2.getFilename()).thenReturn("testFile2.txt");
         Iterable<Attachment> attachments = iterable(attachment1, attachment2);
         when(issue.getAttachments()).thenReturn(attachments);
+        // for search:
+        SearchRestClient searchClient = mock(SearchRestClient.class);
+        when(client.getSearchClient()).thenReturn(searchClient);
+        Promise<SearchResult> resultPromise = mock(Promise.class);
+        when(searchClient.searchJql(eq(VALID_FILTER), any(Integer.class), any(), any())).thenReturn(resultPromise);
+        SearchResult searchResult = mock(SearchResult.class);
+        when(resultPromise.claim()).thenReturn(searchResult);
+        when(searchResult.getIssues()).thenReturn(iterable(issue));
+        // search with empty result:
+        Promise<SearchResult> noResultPromise = mock(Promise.class);
+        when(searchClient.searchJql(not(eq(VALID_FILTER)), any(), any(), any())).thenReturn(noResultPromise);
+        SearchResult noResult = mock(SearchResult.class);
+        when(noResultPromise.claim()).thenReturn(noResult);
+        when(noResult.getIssues()).thenReturn(iterable());
         return factory;
     }
 
