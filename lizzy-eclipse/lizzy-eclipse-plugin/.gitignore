@@ -1,0 +1,5 @@
+/bin/
+/target/
+/.settings
+!/.settings/org.eclipse.jdt.ui.prefs
+/.metadata
