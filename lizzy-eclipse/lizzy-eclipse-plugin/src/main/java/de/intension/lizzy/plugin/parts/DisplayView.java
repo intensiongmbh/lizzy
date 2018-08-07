@@ -3,6 +3,7 @@ package de.intension.lizzy.plugin.parts;
 import static com.google.common.collect.Lists.newArrayList;
 import static de.intension.lizzy.plugin.dialogs.Dialogs.message;
 import static de.intension.lizzy.plugin.parts.SearchView.ISSUE_KEY;
+import static de.intension.lizzy.plugin.provider.SecureStorageNodeProvider.PROJECT;
 
 import java.io.IOException;
 
@@ -16,6 +17,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.equinox.security.storage.StorageException;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -32,8 +35,11 @@ import com.atlassian.jira.rest.client.api.domain.Attachment;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 
 import de.intension.lizzy.converter.gherkin.GherkinConverter;
+import de.intension.lizzy.plugin.dialogs.ConverterConfigurationDialog;
+import de.intension.lizzy.plugin.dialogs.Dialogs;
 import de.intension.lizzy.plugin.listener.ExecuteActionListener;
 import de.intension.lizzy.plugin.listener.ExecuteActionListener.ListenerAction;
+import de.intension.lizzy.plugin.provider.SecureStorageNodeProvider;
 
 /**
  * Eclipse view to display ticket contents (built with SWT).
@@ -97,39 +103,33 @@ public class DisplayView
                 String desc = description.getText();
                 if (!desc.isEmpty()) {
                     try {
-                        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-                        IProject project = getFirstProject(root);
-                        if (project == null) {
-                            message("No project", "There is no Project in the workspace.", SWT.OK | SWT.ICON_WARNING);
-                            return;
+                        ConverterConfigurationDialog dialog = Dialogs.converterConfiguration();
+                        if (dialog.open() == Window.OK) {
+                            String projectName = SecureStorageNodeProvider.get(PROJECT);
+                            if (projectName.isEmpty()) {
+                                return;
+                            }
+                            String location = dialog.getLocation();
+                            String packageName = dialog.getPackageName();
+
+                            String srcFolder = getFullPath(projectName, location);
+                            if (srcFolder == null) {
+                                message("Folder not found", "The source folder '" + location + "' does not exist.",
+                                        SWT.OK | SWT.ICON_WARNING);
+                                return;
+                            }
+
+                            GherkinConverter converter = new GherkinConverter().setPackageName(packageName).setLocation(srcFolder);
+                            converter.convert(desc);
+                            message("Generation successful", "Test class was successfully generated. Refresh your project to inspect the changes.",
+                                    SWT.OK | SWT.ICON_INFORMATION);
                         }
-                        IFolder folder = project.getFolder("src/test/java");
-                        String location = folder.getLocation().toString();
-                        GherkinConverter converter = new GherkinConverter().setPackageName("test").setLocation(location);
-                        converter.convert(desc);
-                        message("Generation successful", "Test class was successfully generated. Refresh your project to inspect the changes.",
-                                SWT.OK | SWT.ICON_INFORMATION);
-                    } catch (IOException ioe) {
-                        logger.error(ioe);
+                    } catch (IOException | StorageException ex) {
+                        logger.error(ex);
                     }
                 }
             }
         };
-    }
-
-    /**
-     * Method to get a project from the workspace.
-     * 
-     * @param root Workspace root.
-     * @return First project of workspace or <code>null</code> if none is found.
-     */
-    private IProject getFirstProject(IWorkspaceRoot root)
-    {
-        IProject[] projects = root.getProjects();
-        if (projects.length == 0) {
-            return null;
-        }
-        return projects[0];
     }
 
     private ExecuteActionListener updateFieldsListener()
@@ -154,5 +154,16 @@ public class DisplayView
                 attachments.add(attachment.getFilename());
             }
         }
+    }
+
+    private String getFullPath(String projectName, String location)
+    {
+        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+        IProject project = root.getProject(projectName);
+        IFolder folder = project.getFolder(location);
+        if (!folder.exists()) {
+            return null;
+        }
+        return folder.getLocation().toString();
     }
 }

@@ -13,6 +13,7 @@ public class SecureStorageNodeProvider
     public static final String PASSWORD             = "password";
     public static final String USER                 = "user";
     public static final String CONTENT_PROVIDER_URL = "contentProviderURL";
+    public static final String PROJECT              = "project";
 
     private static ISecurePreferences getNode()
     {

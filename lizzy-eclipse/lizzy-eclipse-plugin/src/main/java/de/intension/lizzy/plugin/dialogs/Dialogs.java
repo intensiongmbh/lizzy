@@ -36,4 +36,15 @@ public class Dialogs
         PasswordDialog dialog = new PasswordDialog(Display.getDefault().getActiveShell());
         return dialog.open();
     }
+
+    /**
+     * Displays a dialog with a drop down selection to choose a project from the workspace
+     * and input fields for source folder location and package name.
+     * 
+     * @return {@link ConverterConfigurationDialog} instance
+     */
+    public static ConverterConfigurationDialog converterConfiguration()
+    {
+        return new ConverterConfigurationDialog(Display.getDefault().getActiveShell());
+    }
 }
