@@ -1,12 +1,19 @@
 package de.intension.lizzy.plugin.parts;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static de.intension.lizzy.plugin.dialogs.Dialogs.message;
 import static de.intension.lizzy.plugin.provider.SecureStorageNodeProvider.CONTENT_PROVIDER_URL;
 import static de.intension.lizzy.plugin.provider.SecureStorageNodeProvider.PASSWORD;
 import static de.intension.lizzy.plugin.provider.SecureStorageNodeProvider.USER;
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.FORBIDDEN;
 import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
 import static org.eclipse.e4.ui.workbench.modeling.EPartService.PartState.VISIBLE;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -14,7 +21,6 @@ import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.log.Logger;
-import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.window.Window;
@@ -30,6 +36,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWebBrowser;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 
 import com.atlassian.jira.rest.client.api.RestClientException;
 import com.atlassian.jira.rest.client.api.domain.Issue;
@@ -46,23 +56,23 @@ import de.intension.lizzy.plugin.provider.SecureStorageNodeProvider;
 public class SearchView
 {
 
-    public static final String ID                 = "lizzy-eclipse-plugin.partdescriptor.searchticket";
-    public static final String ISSUE_KEY          = "selectedIssue";
+    public static final String    ID                 = "lizzy-eclipse-plugin.partdescriptor.searchticket";
+    public static final String    ISSUE_KEY          = "selectedIssue";
 
     @Inject
-    private EPartService       partService;
+    private EPartService          partService;
     @Inject
-    private IEclipseContext    context;
+    private IEclipseContext       context;
     @Inject
-    private Logger             logger;
+    private Logger                logger;
 
-    private Text               urlInput;
-    private Text               searchInput;
-    private List               issues;
+    private Text                  urlInput;
+    private Text                  searchInput;
+    private List                  issueListView;
 
-    private Issue              issue;
+    private java.util.List<Issue> issues;
 
-    private boolean            invalidCredentials = false;
+    private boolean               invalidCredentials = false;
 
     @PostConstruct
     public void createPartControl(Composite parent)
@@ -80,18 +90,47 @@ public class SearchView
         urlInput.setText(SecureStorageNodeProvider.get(CONTENT_PROVIDER_URL));
 
         Composite searchComp = new Composite(parent, SWT.NONE);
-        searchComp.setLayout(new GridLayout(2, false));
+        searchComp.setLayout(new GridLayout(3, false));
         searchComp.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
+        Button help = new Button(searchComp, SWT.NONE);
+        help.setText(" ? ");
+        help.setToolTipText("Advanced searching - Jira");
+        help.addSelectionListener(webpageListener("https://confluence.atlassian.com/jirasoftwarecloud/advanced-searching-764478330.html"));
         searchInput = new Text(searchComp, SWT.BORDER);
         searchInput.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
+        searchInput.setMessage("JQL search filter");
         searchInput.addListener(SWT.Traverse, searchTicketListener(SWT.TRAVERSE_RETURN));
         Button searchButton = new Button(searchComp, SWT.BORDER);
         searchButton.setText("Search");
         searchButton.addListener(SWT.Selection, searchTicketListener(SWT.Selection));
 
-        issues = new List(parent, SWT.BORDER);
-        issues.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
-        issues.addSelectionListener(displayTicketListener());
+        issueListView = new List(parent, SWT.BORDER | SWT.V_SCROLL);
+        issueListView.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+        issueListView.addSelectionListener(displayTicketListener());
+    }
+
+    /**
+     * Listener to open a web page with desired url.
+     * Uses the eclipse default browser.
+     * 
+     * @param url address to the page.
+     */
+    private SelectionAdapter webpageListener(String url)
+    {
+        return new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e)
+            {
+                try {
+                    IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
+                    IWebBrowser browser = support.createBrowser(null);
+                    browser.openURL(new URL(url));
+                } catch (PartInitException | MalformedURLException ex) {
+                    logger.error(ex);
+                }
+            }
+        };
     }
 
     /**
@@ -104,7 +143,7 @@ public class SearchView
             @Override
             public void widgetSelected(SelectionEvent e)
             {
-                context.getParent().set(ISSUE_KEY, issue);
+                context.getParent().set(ISSUE_KEY, issues.get(issueListView.getSelectionIndex()));
                 partService.showPart(DisplayView.ID, VISIBLE);
             }
         };
@@ -123,13 +162,13 @@ public class SearchView
             public void handleEvent(Event event)
             {
                 if (event.type == eventType) {
-                    searchTicket();
+                    searchTickets();
                 }
             }
         };
     }
 
-    private void searchTicket()
+    private void searchTickets()
     {
         try {
             String url = urlInput.getText();
@@ -141,26 +180,41 @@ public class SearchView
                 SecureStorageNodeProvider.put(CONTENT_PROVIDER_URL, url);
             }
 
-            String ticketId = searchInput.getText();
-            if (ticketId.isEmpty()) {
+            String filterString = searchInput.getText();
+            if (filterString.isEmpty()) {
                 message("No search filter", "Please enter a search filter for the ticket.", SWT.ICON_WARNING | SWT.OK);
                 return;
             }
             JiraAdapter adapter = login(url);
 
-            issue = adapter.getIssue(ticketId);
-            issues.setItems(issue.getKey() + ": " + issue.getSummary());
+            issues = newArrayList(adapter.getIssues(filterString, 10));
+            issueListView.setItems(getDisplayNames(issues));
             invalidCredentials = false;
         } catch (Exception ex) {
             RestClientException rce = getThrowableFromCause(ex, RestClientException.class);
-            if (rce != null && (rce.getStatusCode().get() == UNAUTHORIZED.getStatusCode() || rce.getStatusCode().get() == FORBIDDEN.getStatusCode())) {
-                invalidCredentials = true;
-                message(Status.fromStatusCode(rce.getStatusCode().get()).toString(), "Access is denied due to invalid credentials.",
-                        SWT.ICON_ERROR | SWT.OK);
-                return;
+            if (rce != null) {
+                if (rce.getStatusCode().get() == UNAUTHORIZED.getStatusCode() || rce.getStatusCode().get() == FORBIDDEN.getStatusCode()) {
+                    invalidCredentials = true;
+                    message(Status.fromStatusCode(rce.getStatusCode().get()).toString(), "Access is denied due to invalid credentials.",
+                            SWT.ICON_ERROR | SWT.OK);
+                    return;
+                }
+                else if (rce.getStatusCode().get() == BAD_REQUEST.getStatusCode()) {
+                    message(Status.fromStatusCode(rce.getStatusCode().get()).toString(), "Ticket was not found.\n" + rce.getMessage(),
+                            SWT.ICON_WARNING | SWT.OK);
+                    issueListView.setItems();
+                    return;
+                }
             }
             logger.error(ex);
         }
+    }
+
+    private String[] getDisplayNames(Iterable<Issue> issues)
+    {
+        Collection<String> result = new ArrayList<>();
+        issues.forEach(issue -> result.add(issue.getKey() + ": " + issue.getSummary()));
+        return result.toArray(new String[0]);
     }
 
     /**
@@ -180,12 +234,6 @@ public class SearchView
             }
         }
         return new JiraAdapter(uri, user, password);
-    }
-
-    @Focus
-    public void setFocus()
-    {
-        searchInput.setFocus();
     }
 
     @SuppressWarnings("unchecked")
