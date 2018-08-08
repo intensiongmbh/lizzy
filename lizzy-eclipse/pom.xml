@@ -15,7 +15,7 @@
 
   <properties>
     <tycho.version>1.1.0</tycho.version>
-    <eclipse-repo.url>http://download.eclipse.org/releases/oxygen</eclipse-repo.url>
+    <eclipse-repo.url>http://download.eclipse.org/releases/photon</eclipse-repo.url>
     <lizzy.plugin.lib>${project.basedir}/lizzy-eclipse-plugin/lib</lizzy.plugin.lib>
   </properties>
 
