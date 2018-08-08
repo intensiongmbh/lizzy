@@ -28,6 +28,9 @@
 
   <modules>
     <module>lizzy-eclipse-plugin</module>
+    <module>lizzy-eclipse-license</module>
+    <module>lizzy-eclipse-feature</module>
+    <module>lizzy-eclipse-updatesite</module>
   </modules>
 
   <build>

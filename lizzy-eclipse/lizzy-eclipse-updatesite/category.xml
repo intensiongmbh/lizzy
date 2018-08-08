@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/lizzy_eclipse_feature_1.0.0.qualifier.jar" id="lizzy_eclipse_feature" version="1.0.0.qualifier">
+      <category name="lizzy_category"/>
+   </feature>
+   <category-def name="lizzy_category" label="Lizzy test code generators">
+      <description>
+         Eclipse plugin for unit test generation for connection to ticket systems.
+      </description>
+   </category-def>
+</site>
