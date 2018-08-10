@@ -1,11 +1,11 @@
 package de.intension.lizzy.plugin.parts;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static de.intension.lizzy.plugin.dialogs.Dialogs.message;
 import static de.intension.lizzy.plugin.parts.SearchView.ISSUE_KEY;
 import static de.intension.lizzy.plugin.provider.SecureStorageNodeProvider.PROJECT;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -154,6 +154,16 @@ public class DisplayView
                 attachments.add(attachment.getFilename());
             }
         }
+    }
+
+    private ArrayList<Attachment> newArrayList(Iterable<Attachment> attachments)
+    {
+        ArrayList<Attachment> list = new ArrayList<>();
+        if (attachments == null) {
+            return list;
+        }
+        attachments.forEach(attachment -> list.add(attachment));
+        return list;
     }
 
     private String getFullPath(String projectName, String location)
