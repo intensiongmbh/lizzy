@@ -1,7 +1,7 @@
 package de.intension.lizzy.plugin.dialogs;
 
 import static de.intension.lizzy.plugin.dialogs.Dialogs.message;
-import static de.intension.lizzy.plugin.provider.SecureStorageNodeProvider.PASSWORD;
+import static de.intension.lizzy.plugin.provider.SecureStorageNodeProvider.IDENTIFICATION;
 import static de.intension.lizzy.plugin.provider.SecureStorageNodeProvider.USER;
 
 import javax.inject.Inject;
@@ -79,7 +79,7 @@ public class PasswordDialog extends Dialog
 
         try {
             SecureStorageNodeProvider.put(USER, txtUser.getText());
-            SecureStorageNodeProvider.put(PASSWORD, txtPassword.getText());
+            SecureStorageNodeProvider.put(IDENTIFICATION, txtPassword.getText());
         } catch (StorageException e) {
             message("Storage failure", "Could not store in Secure Storage.", SWT.ICON_ERROR | SWT.OK);
             logger.error(e);

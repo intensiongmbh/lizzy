@@ -3,7 +3,7 @@ package de.intension.lizzy.plugin.parts;
 import static com.google.common.collect.Lists.newArrayList;
 import static de.intension.lizzy.plugin.dialogs.Dialogs.message;
 import static de.intension.lizzy.plugin.provider.SecureStorageNodeProvider.CONTENT_PROVIDER_URL;
-import static de.intension.lizzy.plugin.provider.SecureStorageNodeProvider.PASSWORD;
+import static de.intension.lizzy.plugin.provider.SecureStorageNodeProvider.IDENTIFICATION;
 import static de.intension.lizzy.plugin.provider.SecureStorageNodeProvider.USER;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.FORBIDDEN;
@@ -226,11 +226,11 @@ public class SearchView
         throws Exception
     {
         String user = SecureStorageNodeProvider.get(USER);
-        String password = SecureStorageNodeProvider.get(PASSWORD);
+        String password = SecureStorageNodeProvider.get(IDENTIFICATION);
         if (invalidCredentials || user.isEmpty() || password.isEmpty()) {
             if (Dialogs.credentials() == Window.OK) {
                 user = SecureStorageNodeProvider.get(USER);
-                password = SecureStorageNodeProvider.get(PASSWORD);
+                password = SecureStorageNodeProvider.get(IDENTIFICATION);
             }
         }
         return new JiraAdapter(uri, user, password);
