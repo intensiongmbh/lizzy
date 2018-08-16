@@ -4,6 +4,8 @@ master_build:
   - mvn clean deploy sonar:sonar
  tags:
   - java8
+ only:
+  - master
 
 feature_build:
  stage: test
