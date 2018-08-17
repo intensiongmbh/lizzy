@@ -16,7 +16,6 @@
   <properties>
     <tycho.version>1.1.0</tycho.version>
     <eclipse-repo.url>http://download.eclipse.org/releases/photon</eclipse-repo.url>
-    <lizzy.plugin.lib>${project.basedir}/lizzy-eclipse-plugin/lib</lizzy.plugin.lib>
   </properties>
 
   <repositories>
@@ -33,42 +32,6 @@
 
   <build>
     <plugins>
-      <!-- Copy converter and adapter OSGi bundle to plugin dependencies -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>${project.groupId}</groupId>
-                  <artifactId>lizzy-converter</artifactId>
-                  <version>${project.version}</version>
-                  <type>jar</type>
-                  <overWrite>true</overWrite>
-                  <outputDirectory>${lizzy.plugin.lib}</outputDirectory>
-                  <destFileName>lizzy-converter.jar</destFileName>
-                </artifactItem>
-                <artifactItem>
-                  <groupId>${project.groupId}</groupId>
-                  <artifactId>lizzy-adapter</artifactId>
-                  <version>${project.version}</version>
-                  <type>jar</type>
-                  <overWrite>true</overWrite>
-                  <outputDirectory>${lizzy.plugin.lib}</outputDirectory>
-                  <destFileName>lizzy-adapter.jar</destFileName>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>tycho-maven-plugin</artifactId>

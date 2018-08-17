@@ -14,4 +14,48 @@
   <name>Lizzy Eclipse plugin</name>
   <description>Lizzy Eclipse plugin OSGi bundle.</description>
 
+  <properties>
+    <lizzy.plugin.lib>${project.basedir}/target</lizzy.plugin.lib>
+  </properties>
+
+  <build>
+    <plugins>
+      <!-- Copy converter and adapter OSGi bundle to plugin dependencies -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>${project.groupId}</groupId>
+                  <artifactId>lizzy-converter</artifactId>
+                  <version>${project.version}</version>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${lizzy.plugin.lib}</outputDirectory>
+                  <destFileName>lizzy-converter.jar</destFileName>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>${project.groupId}</groupId>
+                  <artifactId>lizzy-adapter</artifactId>
+                  <version>${project.version}</version>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${lizzy.plugin.lib}</outputDirectory>
+                  <destFileName>lizzy-adapter.jar</destFileName>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
