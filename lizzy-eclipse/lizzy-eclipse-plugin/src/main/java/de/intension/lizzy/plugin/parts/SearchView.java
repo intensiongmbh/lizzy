@@ -1,6 +1,5 @@
 package de.intension.lizzy.plugin.parts;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static de.intension.lizzy.plugin.dialogs.Dialogs.message;
 import static de.intension.lizzy.plugin.provider.SecureStorageNodeProvider.CONTENT_PROVIDER_URL;
 import static de.intension.lizzy.plugin.provider.SecureStorageNodeProvider.IDENTIFICATION;
@@ -42,8 +41,8 @@ import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 
 import com.atlassian.jira.rest.client.api.RestClientException;
-import com.atlassian.jira.rest.client.api.domain.Issue;
 
+import de.intension.lizzy.adapter.Issue;
 import de.intension.lizzy.adapter.jira.JiraAdapter;
 import de.intension.lizzy.plugin.dialogs.Dialogs;
 import de.intension.lizzy.plugin.dialogs.PasswordDialog;
@@ -187,7 +186,7 @@ public class SearchView
             }
             JiraAdapter adapter = login(url);
 
-            issues = newArrayList(adapter.getIssues(filterString, 10));
+            issues = adapter.getIssues(filterString, 10);
             issueListView.setItems(getDisplayNames(issues));
             invalidCredentials = false;
         } catch (Exception ex) {
@@ -213,7 +212,7 @@ public class SearchView
     private String[] getDisplayNames(Iterable<Issue> issues)
     {
         Collection<String> result = new ArrayList<>();
-        issues.forEach(issue -> result.add(issue.getKey() + ": " + issue.getSummary()));
+        issues.forEach(issue -> result.add(issue.getKey() + ": " + issue.getTitle()));
         return result.toArray(new String[0]);
     }
 

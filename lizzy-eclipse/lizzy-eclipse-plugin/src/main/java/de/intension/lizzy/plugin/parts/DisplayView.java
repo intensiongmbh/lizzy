@@ -5,7 +5,6 @@ import static de.intension.lizzy.plugin.parts.SearchView.ISSUE_KEY;
 import static de.intension.lizzy.plugin.provider.SecureStorageNodeProvider.PROJECT;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -28,12 +27,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
 
-import com.atlassian.jira.rest.client.api.domain.Attachment;
-import com.atlassian.jira.rest.client.api.domain.Issue;
-
+import de.intension.lizzy.adapter.Issue;
 import de.intension.lizzy.converter.gherkin.GherkinConverter;
 import de.intension.lizzy.plugin.dialogs.ConverterConfigurationDialog;
 import de.intension.lizzy.plugin.dialogs.Dialogs;
@@ -59,7 +55,6 @@ public class DisplayView
 
     private Group              title;
     private Text               description;
-    private List               attachments;
 
     @PostConstruct
     public void createPartControl(Composite parent)
@@ -86,9 +81,6 @@ public class DisplayView
         attGroup.setText("Attachments");
         attGroup.setLayout(new GridLayout(1, false));
         attGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
-        attachments = new List(attGroup, SWT.BORDER);
-        attachments.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
-        attachments.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
 
         partService.addPartListener(updateFieldsListener());
     }
@@ -148,22 +140,9 @@ public class DisplayView
     {
         Issue issue = (Issue)context.getParent().get(ISSUE_KEY);
         if (issue != null) {
-            title.setText(issue.getKey() + ": " + issue.getSummary());
+            title.setText(issue.getKey() + ": " + issue.getTitle());
             description.setText(issue.getDescription());
-            for (Attachment attachment : newArrayList(issue.getAttachments())) {
-                attachments.add(attachment.getFilename());
-            }
         }
-    }
-
-    private ArrayList<Attachment> newArrayList(Iterable<Attachment> attachments)
-    {
-        ArrayList<Attachment> list = new ArrayList<>();
-        if (attachments == null) {
-            return list;
-        }
-        attachments.forEach(attachment -> list.add(attachment));
-        return list;
     }
 
     private String getFullPath(String projectName, String location)

@@ -2,7 +2,6 @@ package de.intension.lizzy.adapter.jira;
 
 import static com.atlassian.fugue.Iterables.iterable;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
@@ -17,6 +16,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.core.Response.Status;
@@ -29,10 +29,11 @@ import com.atlassian.jira.rest.client.api.JiraRestClientFactory;
 import com.atlassian.jira.rest.client.api.RestClientException;
 import com.atlassian.jira.rest.client.api.SearchRestClient;
 import com.atlassian.jira.rest.client.api.domain.Attachment;
-import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.atlassian.util.concurrent.Promise;
+
+import de.intension.lizzy.adapter.Issue;
 
 public class JiraAdapterTest
 {
@@ -101,24 +102,6 @@ public class JiraAdapterTest
 
     /**
      * GIVEN Jira adapter with valid credentials
-     * WHEN requesting ticket attachments
-     * THEN corresponding ticket attachment URL is returned
-     */
-    @Test
-    @SuppressWarnings("unchecked")
-    public void should_return_ticket_attachments()
-        throws Exception
-    {
-        JiraAdapter adapter = new JiraAdapter(URI, USERNAME, PASSWORD).setFactory(setupFactory());
-
-        Iterable<Attachment> attachments = adapter.getAttachments(TICKET_ID);
-
-        assertThat(attachments, containsInAnyOrder(hasProperty("filename", equalTo("testFile1.txt")),
-                                                   hasProperty("filename", equalTo("testFile2.txt"))));
-    }
-
-    /**
-     * GIVEN Jira adapter with valid credentials
      * WHEN requesting ticket via filter string
      * THEN matching tickets are returned
      */
@@ -128,7 +111,7 @@ public class JiraAdapterTest
     {
         JiraAdapter adapter = new JiraAdapter(URI, USERNAME, PASSWORD).setFactory(setupFactory());
 
-        Iterable<Issue> issues = adapter.getIssues(VALID_FILTER, 10);
+        List<Issue> issues = adapter.getIssues(VALID_FILTER, 10);
 
         assertThat(issues, contains(hasProperty("description", equalTo(TICKET_DESC))));
     }
@@ -144,7 +127,7 @@ public class JiraAdapterTest
     {
         JiraAdapter adapter = new JiraAdapter(URI, USERNAME, PASSWORD).setFactory(setupFactory());
 
-        Iterable<Issue> issues = adapter.getIssues("id = FAIL-1", 10);
+        List<Issue> issues = adapter.getIssues("id = FAIL-1", 10);
 
         assertThat(issues, iterableWithSize(0));
     }
@@ -162,13 +145,13 @@ public class JiraAdapterTest
             .thenReturn(client);
         IssueRestClient issueClient = mock(IssueRestClient.class);
         when(client.getIssueClient()).thenReturn(issueClient);
-        Promise<Issue> promise = mock(Promise.class);
+        Promise<com.atlassian.jira.rest.client.api.domain.Issue> promise = mock(Promise.class);
         when(issueClient.getIssue(TICKET_ID)).thenReturn(promise);
         ExecutionException executionException = new ExecutionException("test message", new RestClientException(mock(Throwable.class), 404));
-        Promise<Issue> errorPromise = mock(Promise.class);
+        Promise<com.atlassian.jira.rest.client.api.domain.Issue> errorPromise = mock(Promise.class);
         when(issueClient.getIssue(not(eq(TICKET_ID)))).thenReturn(errorPromise);
         when(errorPromise.get()).thenThrow(executionException);
-        Issue issue = mock(Issue.class);
+        com.atlassian.jira.rest.client.api.domain.Issue issue = mock(com.atlassian.jira.rest.client.api.domain.Issue.class);
         when(promise.get()).thenReturn(issue);
         when(issue.getDescription()).thenReturn(TICKET_DESC);
         Attachment attachment1 = mock(Attachment.class);
