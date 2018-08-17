@@ -13,6 +13,7 @@ import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientF
 import com.atlassian.util.concurrent.Promise;
 
 import de.intension.lizzy.adapter.Issue;
+import de.intension.lizzy.adapter.MarkdownRemover;
 
 /**
  * Adapter for the Jira Rest API.
@@ -98,7 +99,7 @@ public class JiraAdapter
         if (jiraIssue == null) {
             return null;
         }
-        return new Issue().setKey(jiraIssue.getKey()).setTitle(jiraIssue.getSummary()).setDescription(jiraIssue.getDescription());
+        return new Issue().setKey(jiraIssue.getKey()).setTitle(jiraIssue.getSummary()).setDescription(MarkdownRemover.toPlainText(jiraIssue.getDescription()));
     }
 
     private List<Issue> createIssues(Iterable<com.atlassian.jira.rest.client.api.domain.Issue> jiraIssues)
