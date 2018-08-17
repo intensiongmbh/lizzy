@@ -2,8 +2,18 @@ package de.intension.lizzy.converter.gherkin;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Optional;
 
+import org.junit.Test;
+
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Modifier;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
 import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
 
 import de.intension.lizzy.converter.CaseFormat;
 import gherkin.ast.Feature;
@@ -33,8 +43,47 @@ public class GherkinConverter
     {
         Feature feature = GherkinParser.parseFeature(string);
         JavaFile javaFile = GherkinGenerator.generate(feature, packageName, methodFormat);
-        File file = new File(location);
-        javaFile.writeTo(file);
+        File dir = new File(location);
+        File file = new File(location + File.separator + javaFile.packageName.replace(".", File.separator) + File.separator + javaFile.typeSpec.name + ".java");
+        if (file.exists()) {
+            appendMethods(javaFile, file);
+            return;
+        }
+        javaFile.writeTo(dir);
+    }
+
+    /**
+     * Appends methods to an existing test class.
+     * Method doesn't get added if method already exists in the file.
+     */
+    private void appendMethods(JavaFile javaFile, File file)
+        throws IOException
+    {
+        CompilationUnit unit = JavaParser.parse(file);
+        Optional<ClassOrInterfaceDeclaration> optional = unit.getClassByName(javaFile.typeSpec.name);
+        if (!optional.isPresent()) {
+            return;
+        }
+        ClassOrInterfaceDeclaration javaClass = optional.get();
+        javaFile.typeSpec.methodSpecs.forEach(method -> addMethod(javaClass, method));
+        Files.write(file.toPath(), unit.toString().getBytes());
+    }
+
+    /**
+     * Adds a method to the class declaration with modifier {@link Modifier#PUBLIC}
+     * and annotation @{@link Test}.
+     */
+    private MethodDeclaration addMethod(ClassOrInterfaceDeclaration javaClass, MethodSpec methodSpec)
+    {
+        String methodName = methodSpec.name;
+        if (!javaClass.getMethodsByName(methodName).isEmpty()) {
+            return null;
+        }
+        javaClass.addMethod(methodName, Modifier.PUBLIC);
+        MethodDeclaration method = javaClass.getMethodsByName(methodName).get(0);
+        method.setJavadocComment(methodSpec.javadoc.toString());
+        method.addAnnotation(Test.class);
+        return method;
     }
 
     /**
