@@ -2,15 +2,17 @@ package de.intension.lizzy.adapter.jira;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClientFactory;
-import com.atlassian.jira.rest.client.api.domain.Attachment;
-import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.SearchResult;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.atlassian.util.concurrent.Promise;
+
+import de.intension.lizzy.adapter.Issue;
 
 /**
  * Adapter for the Jira Rest API.
@@ -39,18 +41,6 @@ public class JiraAdapter
     }
 
     /**
-     * Retrieves the attachments of a Jira ticket.
-     *
-     * @param ticketId Ticket id of the issue.
-     * @return attachments of the issue as list.
-     */
-    public Iterable<Attachment> getAttachments(String ticketId)
-        throws InterruptedException, ExecutionException
-    {
-        return getIssue(ticketId).getAttachments();
-    }
-
-    /**
      * Retrieves the description of a Jira ticket.
      *
      * @param ticketId Ticket id of the issue.
@@ -70,7 +60,7 @@ public class JiraAdapter
     public Issue getIssue(String ticketId)
         throws InterruptedException, ExecutionException
     {
-        return getJiraClient().getIssueClient().getIssue(ticketId).get();
+        return createIssue(getJiraClient().getIssueClient().getIssue(ticketId).get());
     }
 
     /**
@@ -79,16 +69,16 @@ public class JiraAdapter
      * @param filter Jql filter string.
      * @param maxResult Maximum number of issues to be returned.
      */
-    public Iterable<Issue> getIssues(String filter, int maxResult)
+    public List<Issue> getIssues(String filter, int maxResult)
     {
         Promise<SearchResult> searchResult = getJiraClient().getSearchClient().searchJql(filter, maxResult, 0, null);
-        return searchResult.claim().getIssues();
+        return createIssues(searchResult.claim().getIssues());
     }
 
     /**
      * Creates a Jira client with the given {@link #uri}, {@link #username} and {@link #password}.
      */
-    public JiraRestClient getJiraClient()
+    private JiraRestClient getJiraClient()
     {
         JiraRestClientFactory factory = getFactory();
         return factory.createWithBasicHttpAuthentication(uri, username, password);
@@ -97,13 +87,31 @@ public class JiraAdapter
     /**
      * Creates an {@link URI} object from the string.
      */
-    public URI getURI(String uri)
+    private URI getURI(String uri)
         throws URISyntaxException
     {
         return new URI(uri);
     }
 
-    public JiraRestClientFactory getFactory()
+    private Issue createIssue(com.atlassian.jira.rest.client.api.domain.Issue jiraIssue)
+    {
+        if (jiraIssue == null) {
+            return null;
+        }
+        return new Issue().setKey(jiraIssue.getKey()).setTitle(jiraIssue.getSummary()).setDescription(jiraIssue.getDescription());
+    }
+
+    private List<Issue> createIssues(Iterable<com.atlassian.jira.rest.client.api.domain.Issue> jiraIssues)
+    {
+        List<Issue> issues = new ArrayList<>();
+        if (jiraIssues == null) {
+            return issues;
+        }
+        jiraIssues.forEach(issue -> issues.add(createIssue(issue)));
+        return issues;
+    }
+
+    private JiraRestClientFactory getFactory()
     {
         if (factory == null) {
             factory = new AsynchronousJiraRestClientFactory();
