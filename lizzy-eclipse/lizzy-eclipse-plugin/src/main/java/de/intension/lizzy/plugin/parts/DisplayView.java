@@ -27,6 +27,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import de.intension.lizzy.adapter.Issue;
@@ -53,34 +54,28 @@ public class DisplayView
     @Inject
     private Logger             logger;
 
-    private Group              title;
+    private Label              title;
     private Text               description;
 
     @PostConstruct
     public void createPartControl(Composite parent)
     {
-        parent.setLayout(new FillLayout(SWT.HORIZONTAL));
+        parent.setLayout(new GridLayout(2, false));
         // title:
-        title = new Group(parent, SWT.BORDER);
+        title = new Label(parent, SWT.NONE);
+        title.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
         title.setText("No ticket selected.");
-        title.setLayout(new GridLayout(1, false));
         // description:
-        Group descGroup = new Group(title, SWT.BORDER);
+        Group descGroup = new Group(parent, SWT.BORDER);
         descGroup.setText("Description");
-        descGroup.setLayout(new GridLayout(2, false));
-        descGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
+        descGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        descGroup.setLayout(new FillLayout());
         description = new Text(descGroup, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-        description.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
-        Button generateButton = new Button(descGroup, SWT.BORDER);
+        Button generateButton = new Button(parent, SWT.BORDER);
         generateButton.setText("Generate");
         generateButton.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false, false, 1, 1));
         generateButton.setToolTipText("Generate code from description");
         generateButton.addSelectionListener(generateCodeListener());
-        // attachments:
-        Group attGroup = new Group(title, SWT.BORDER);
-        attGroup.setText("Attachments");
-        attGroup.setLayout(new GridLayout(1, false));
-        attGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
 
         partService.addPartListener(updateFieldsListener());
     }
