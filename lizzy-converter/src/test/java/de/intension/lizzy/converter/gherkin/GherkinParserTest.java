@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import de.intension.lizzy.converter.gherkin.GherkinParser;
 import gherkin.ast.Feature;
 import gherkin.ast.ScenarioDefinition;
 import gherkin.ast.Step;
@@ -19,17 +18,10 @@ import gherkin.ast.Step;
 public class GherkinParserTest
 {
 
-    public static final String TEST_FEATURE = "Feature: The name of the feature here\n" +
-            "    Description of the feature.\n" +
-            "    Description can also have two lines.\n" +
-            "\n" +
-            "    Scenario: Scenario 1\n" +
-            "        Given some precondition\n" +
-            "        And more preconditions\n" +
-            "        When some action\n" +
-            "        And more actions\n" +
-            "        Then some result\n" +
-            "        And more results";
+    public static final String TEST_FEATURE = "Feature: The name of the feature here\n" + "    Description of the feature.\n"
+            + "    Description can also have two lines.\n" + "\n" + "    Scenario: Scenario 1\n" + "        Given some precondition\n"
+            + "        And more preconditions\n" + "        When some action\n" + "        And more actions\n" + "        Then some result\n"
+            + "        And more results";
 
     /**
      * GIVEN Valid gherkin feature text
@@ -40,7 +32,6 @@ public class GherkinParserTest
     public void should_parse_feature_name()
     {
         Feature feature = GherkinParser.parseFeature(TEST_FEATURE);
-
         assertThat(feature.getName(), equalTo("The name of the feature here"));
     }
 
@@ -53,9 +44,7 @@ public class GherkinParserTest
     public void should_parse_feature_description()
     {
         Feature feature = GherkinParser.parseFeature(TEST_FEATURE);
-
-        assertThat(feature.getDescription(), allOf(containsString("Description of the feature."),
-                                                   containsString("Description can also have two lines.")));
+        assertThat(feature.getDescription(), allOf(containsString("Description of the feature."), containsString("Description can also have two lines.")));
     }
 
     /**
@@ -67,7 +56,6 @@ public class GherkinParserTest
     public void should_parse_scenario_name()
     {
         Feature feature = GherkinParser.parseFeature(TEST_FEATURE);
-
         List<ScenarioDefinition> scenarios = feature.getChildren();
         assertThat(scenarios.size(), equalTo(1));
         ScenarioDefinition scenario = scenarios.get(0);
@@ -83,16 +71,13 @@ public class GherkinParserTest
     public void should_parse_scenario_given()
     {
         Feature feature = GherkinParser.parseFeature(TEST_FEATURE);
-
         List<ScenarioDefinition> scenarios = feature.getChildren();
         assertThat(scenarios.size(), equalTo(1));
         ScenarioDefinition scenario = scenarios.get(0);
         List<Step> steps = scenario.getSteps();
         assertThat(steps.size(), equalTo(6));
-        assertThat(steps.get(0), allOf(hasProperty("keyword", startsWith("Given")),
-                                       hasProperty("text", equalTo("some precondition"))));
-        assertThat(steps.get(1), allOf(hasProperty("keyword", startsWith("And")),
-                                       hasProperty("text", equalTo("more preconditions"))));
+        assertThat(steps.get(0), allOf(hasProperty("keyword", startsWith("Given")), hasProperty("text", equalTo("some precondition"))));
+        assertThat(steps.get(1), allOf(hasProperty("keyword", startsWith("And")), hasProperty("text", equalTo("more preconditions"))));
     }
 
     /**
@@ -104,16 +89,13 @@ public class GherkinParserTest
     public void should_parse_scenario_when()
     {
         Feature feature = GherkinParser.parseFeature(TEST_FEATURE);
-
         List<ScenarioDefinition> scenarios = feature.getChildren();
         assertThat(scenarios.size(), equalTo(1));
         ScenarioDefinition scenario = scenarios.get(0);
         List<Step> steps = scenario.getSteps();
         assertThat(steps.size(), equalTo(6));
-        assertThat(steps.get(2), allOf(hasProperty("keyword", startsWith("When")),
-                                       hasProperty("text", equalTo("some action"))));
-        assertThat(steps.get(3), allOf(hasProperty("keyword", startsWith("And")),
-                                       hasProperty("text", equalTo("more actions"))));
+        assertThat(steps.get(2), allOf(hasProperty("keyword", startsWith("When")), hasProperty("text", equalTo("some action"))));
+        assertThat(steps.get(3), allOf(hasProperty("keyword", startsWith("And")), hasProperty("text", equalTo("more actions"))));
     }
 
     /**
@@ -125,15 +107,32 @@ public class GherkinParserTest
     public void should_parse_scenario_then()
     {
         Feature feature = GherkinParser.parseFeature(TEST_FEATURE);
-
         List<ScenarioDefinition> scenarios = feature.getChildren();
         assertThat(scenarios.size(), equalTo(1));
         ScenarioDefinition scenario = scenarios.get(0);
         List<Step> steps = scenario.getSteps();
         assertThat(steps.size(), equalTo(6));
-        assertThat(steps.get(4), allOf(hasProperty("keyword", startsWith("Then")),
-                                       hasProperty("text", equalTo("some result"))));
-        assertThat(steps.get(5), allOf(hasProperty("keyword", startsWith("And")),
-                                       hasProperty("text", equalTo("more results"))));
+        assertThat(steps.get(4), allOf(hasProperty("keyword", startsWith("Then")), hasProperty("text", equalTo("some result"))));
+        assertThat(steps.get(5), allOf(hasProperty("keyword", startsWith("And")), hasProperty("text", equalTo("more results"))));
+    }
+
+    /**
+     * Given gherkin with intendation
+     * When gherkin is parsed
+     * Then a valid feature is created
+     */
+    @Test
+    public void should_parse_scenario_with_intendation()
+    {
+        String gherkin = "Feature: Gherkin parser\n" +
+                "   Scenario: Should parse indented gherkin\n" + //non-breaking space
+                "\tGiven gherkin with intendation\n" + //tabulation
+                "       When gherkin is parsed\n" + //space
+                "Then a valid feature is created   "; //space
+
+        Feature feature = GherkinParser.parseFeature(gherkin);
+
+        List<ScenarioDefinition> scenarios = feature.getChildren();
+        assertThat(scenarios.size(), equalTo(1));
     }
 }
