@@ -66,7 +66,8 @@ public class GherkinConverter
         }
         ClassOrInterfaceDeclaration javaClass = optional.get();
         javaFile.typeSpec.methodSpecs.forEach(method -> addMethod(javaClass, method));
-        Files.write(file.toPath(), unit.toString().getBytes());
+        String polishedFile = unit.toString().replace("@Test()", "@Test");
+        Files.write(file.toPath(), polishedFile.getBytes());
     }
 
     /**

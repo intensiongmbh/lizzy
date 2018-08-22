@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
@@ -122,6 +123,7 @@ public class GherkinConverterTest
                                      containsString("scenario_1")));
         assertThat(content, hasItems(containsString("Test javadoc"),
                                      containsString("some precondition")));
+        assertThat(content, not(hasItem(containsString("@Test()"))));
     }
 
     /**
