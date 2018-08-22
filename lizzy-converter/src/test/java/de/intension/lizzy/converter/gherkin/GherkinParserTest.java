@@ -115,24 +115,4 @@ public class GherkinParserTest
         assertThat(steps.get(4), allOf(hasProperty("keyword", startsWith("Then")), hasProperty("text", equalTo("some result"))));
         assertThat(steps.get(5), allOf(hasProperty("keyword", startsWith("And")), hasProperty("text", equalTo("more results"))));
     }
-
-    /**
-     * Given gherkin with intendation
-     * When gherkin is parsed
-     * Then a valid feature is created
-     */
-    @Test
-    public void should_parse_scenario_with_intendation()
-    {
-        String gherkin = "Feature: Gherkin parser\n" +
-                "   Scenario: Should parse indented gherkin\n" + //non-breaking space
-                "\tGiven gherkin with intendation\n" + //tabulation
-                "       When gherkin is parsed\n" + //space
-                "Then a valid feature is created   "; //space
-
-        Feature feature = GherkinParser.parseFeature(gherkin);
-
-        List<ScenarioDefinition> scenarios = feature.getChildren();
-        assertThat(scenarios.size(), equalTo(1));
-    }
 }

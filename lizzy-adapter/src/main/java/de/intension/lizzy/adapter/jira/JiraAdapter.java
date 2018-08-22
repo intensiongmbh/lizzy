@@ -14,6 +14,7 @@ import com.atlassian.util.concurrent.Promise;
 
 import de.intension.lizzy.adapter.Issue;
 import de.intension.lizzy.adapter.MarkdownRemover;
+import de.intension.lizzy.adapter.MultilineTrimmer;
 
 /**
  * Adapter for the Jira Rest API.
@@ -99,7 +100,7 @@ public class JiraAdapter
         if (jiraIssue == null) {
             return null;
         }
-        return new Issue().setKey(jiraIssue.getKey()).setTitle(jiraIssue.getSummary()).setDescription(MarkdownRemover.toPlainText(jiraIssue.getDescription()));
+        return new Issue().setKey(jiraIssue.getKey()).setTitle(jiraIssue.getSummary()).setDescription(prepare(jiraIssue.getDescription()));
     }
 
     private List<Issue> createIssues(Iterable<com.atlassian.jira.rest.client.api.domain.Issue> jiraIssues)
@@ -124,5 +125,11 @@ public class JiraAdapter
     {
         this.factory = factory;
         return this;
+    }
+
+    private String prepare(String string)
+    {
+        String trimmed = MultilineTrimmer.trim(string);
+        return MarkdownRemover.toPlainText(trimmed);
     }
 }
