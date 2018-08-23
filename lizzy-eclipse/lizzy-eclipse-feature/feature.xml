@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="lizzy_eclipse_feature"
+      label="Lizzy Jira adapter and Gherkin converter"
+      version="1.0.0.qualifier"
+      provider-name="intension GmbH"
+      license-feature="lizzy_eclipse_license"
+      license-feature-version="1.0.0.qualifier">
+
+   <description url="https://hub.intension.de/confluence/pages/viewpage.action?spaceKey=PROJ&amp;title=Lizzy">
+      Eclipse plugin for unit test generation from gherkin text for connection to Jira.
+   </description>
+
+   <url>
+      <discovery label="intension GmbH" url="https://www.intension.de/"/>
+   </url>
+
+   <plugin
+         id="lizzy-eclipse-plugin"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
