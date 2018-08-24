@@ -22,8 +22,8 @@ Require-Bundle: javax.inject,
  org.eclipse.jdt.core;bundle-version="3.14.0",
  org.apache.commons.lang3;bundle-version="3.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Bundle-ClassPath: target/lizzy-adapter.jar,
- target/lizzy-converter.jar,
+Bundle-ClassPath: lib/lizzy-adapter.jar,
+ lib/lizzy-converter.jar,
  .
 Import-Package: javax.annotation;version="1.2.0"
 Automatic-Module-Name: lizzy-eclipse-plugin
