@@ -19,18 +19,19 @@ package de.intension.lizzy.plugin.dialogs;
 import static de.intension.lizzy.plugin.dialogs.Dialogs.message;
 import static de.intension.lizzy.plugin.provider.SecureStorageNodeProvider.PROJECT;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -49,12 +50,8 @@ import de.intension.lizzy.plugin.provider.SecureStorageNodeProvider;
  * 
  * @author <a href="mailto:ikuba@intension.de">Ingo Kuba</a>
  */
-@SuppressWarnings("restriction")
 public class ConverterConfigurationDialog extends Dialog
 {
-
-    @Inject
-    private Logger logger;
 
     private Combo  projects;
     private Text   locationInput;
@@ -112,10 +109,40 @@ public class ConverterConfigurationDialog extends Dialog
         // package name
         Label lblPackage = new Label(parent, SWT.NONE);
         lblPackage.setText("Package:");
-        packageInput = new Text(parent, SWT.BORDER);
+        Composite cmpPackage = new Composite(parent, SWT.NONE);
+        cmpPackage.setLayout(new GridLayout(2, false));
+        cmpPackage.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+        packageInput = new Text(cmpPackage, SWT.BORDER);
         packageInput.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+        Button selectPackage = new Button(cmpPackage, SWT.PUSH);
+        selectPackage.setText("…");
+        selectPackage.setToolTipText("Select package");
+        selectPackage.addSelectionListener(packageBrowser());
         requiredField(packageInput);
         requiredDecorator(parent);
+    }
+
+    /**
+     * Display a {@link PackageBrowserDialog} when the selectPackage button is clicked.
+     */
+    private SelectionListener packageBrowser()
+    {
+        return new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e)
+            {
+                String projectName = projects.getItem(projects.getSelectionIndex());
+                IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+                if (project == null) {
+                    return;
+                }
+                PackageBrowserDialog dialog = Dialogs.packageBrowser(project, locationInput.getText());
+                if (dialog.open() == Window.OK) {
+                    packageInput.setText(dialog.getSelectedPackage());
+                }
+            }
+        };
     }
 
     /**
@@ -200,7 +227,7 @@ public class ConverterConfigurationDialog extends Dialog
                 }
             }
         } catch (StorageException e) {
-            logger.error(e);
+            Dialogs.error(e);
         }
         return 0;
     }
@@ -230,7 +257,7 @@ public class ConverterConfigurationDialog extends Dialog
                 SecureStorageNodeProvider.put(PROJECT, projects.getItem(projects.getSelectionIndex()));
             } catch (StorageException e) {
                 message("Storage failure", "Could not store in Secure Storage.", SWT.ICON_ERROR | SWT.OK);
-                logger.error(e);
+                Dialogs.error(e);
             }
             location = locationInput.getText();
             packageName = packageInput.getText();

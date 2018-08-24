@@ -20,9 +20,6 @@ import static de.intension.lizzy.plugin.dialogs.Dialogs.message;
 import static de.intension.lizzy.plugin.provider.SecureStorageNodeProvider.IDENTIFICATION;
 import static de.intension.lizzy.plugin.provider.SecureStorageNodeProvider.USER;
 
-import javax.inject.Inject;
-
-import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -41,15 +38,11 @@ import de.intension.lizzy.plugin.provider.SecureStorageNodeProvider;
  *
  * @author <a href="mailto:ikuba@intension.de">Ingo Kuba</a>
  */
-@SuppressWarnings("restriction")
 public class PasswordDialog extends Dialog
 {
 
-    @Inject
-    private Logger logger;
-
-    private Text   txtUser;
-    private Text   txtPassword;
+    private Text txtUser;
+    private Text txtPassword;
 
     public PasswordDialog(Shell parentShell)
     {
@@ -74,7 +67,7 @@ public class PasswordDialog extends Dialog
         try {
             txtUser.setText(SecureStorageNodeProvider.get(USER));
         } catch (StorageException se) {
-            logger.error(se);
+            Dialogs.error(se);
             return container;
         }
 
@@ -100,7 +93,7 @@ public class PasswordDialog extends Dialog
             SecureStorageNodeProvider.put(IDENTIFICATION, txtPassword.getText());
         } catch (StorageException e) {
             message("Storage failure", "Could not store in Secure Storage.", SWT.ICON_ERROR | SWT.OK);
-            logger.error(e);
+            Dialogs.error(e);
             return;
         }
         super.okPressed();
