@@ -4,6 +4,8 @@ master_build:
  stage: test
  script:
   - mvn deploy sonar:sonar
+ after_success:
+  - coveralls
  only:
   - master
 
@@ -11,5 +13,7 @@ feature_build:
  stage: test
  script:
   - mvn verify sonar:sonar -Dsonar.analysis.mode=preview
+ after_success:
+  - coveralls
  except:
   - master
