@@ -1,6 +1,6 @@
 <img src="src/site/resources/images/Lizzy_logo.png" alt="Lizzy">
 
-![Travis](https://api.travis-ci.com/intensiongmbh/lizzy.svg?branch=master)
+![Travis](https://api.travis-ci.com/intensiongmbh/lizzy.svg?branch=master) [![Coverage Status](https://coveralls.io/repos/github/intensiongmbh/lizzy/badge.svg)](https://coveralls.io/github/intensiongmbh/lizzy)
 
 # Eclipse plugin for unit test generation for connection to ticket systems.
 
