@@ -10,9 +10,31 @@
 
   <name>Lizzy parent project</name>
 
+  <organization>
+    <name>inTension GmbH</name>
+    <url>http://www.intension.de</url>
+  </organization>
+
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/intensiongmbh/lizzy/issues</url>
+  </issueManagement>
+
+  <ciManagement>
+    <system>Travis CI</system>
+    <url>https://travis-ci.com/intensiongmbh/lizzy</url>
+  </ciManagement>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+
+  <repositories>
+    <repository>
+      <id>maven-atlassian</id>
+      <url>https://maven.atlassian.com/repository/public</url>
+    </repository>
+  </repositories>
 
   <modules>
     <module>lizzy-converter</module>
@@ -47,6 +69,7 @@
       <!-- Enforce java 1.8 as default for all projects -->
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.0</version>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>

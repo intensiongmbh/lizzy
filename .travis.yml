@@ -1,0 +1,15 @@
+language: java
+
+master_build:
+ stage: test
+ script:
+  - mvn deploy sonar:sonar
+ only:
+  - master
+
+feature_build:
+ stage: test
+ script:
+  - mvn verify sonar:sonar -Dsonar.analysis.mode=preview
+ except:
+  - master
