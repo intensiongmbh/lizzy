@@ -1,5 +1,7 @@
 <img src="src/site/resources/images/Lizzy_logo.png" alt="Lizzy">
 
+![Travis](https://api.travis-ci.com/intensiongmbh/lizzy.svg?branch=master)
+
 # Eclipse plugin for unit test generation for connection to ticket systems.
 
 Lizzy is a free, open-source Eclipse plugin to generate test code from BusinessReadableDSL taken from ticket systems.

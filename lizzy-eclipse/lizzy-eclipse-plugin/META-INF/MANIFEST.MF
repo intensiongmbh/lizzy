@@ -19,7 +19,8 @@ Require-Bundle: javax.inject,
  org.eclipse.ui.browser;bundle-version="3.6.200",
  org.eclipse.ui;bundle-version="3.109.100",
  org.eclipse.core.runtime;bundle-version="3.14.0",
- org.eclipse.jdt.core;bundle-version="3.14.0"
+ org.eclipse.jdt.core;bundle-version="3.14.0",
+ org.apache.commons.lang3;bundle-version="3.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: target/lizzy-adapter.jar,
  target/lizzy-converter.jar,
