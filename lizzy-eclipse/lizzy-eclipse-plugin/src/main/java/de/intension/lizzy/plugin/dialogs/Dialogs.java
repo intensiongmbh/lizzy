@@ -16,6 +16,7 @@
  ******************************************************************************/
 package de.intension.lizzy.plugin.dialogs;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
@@ -45,6 +46,14 @@ public class Dialogs
     }
 
     /**
+     * Display a Dialog with Exception Stacktrace.
+     */
+    public static int error(Throwable t)
+    {
+        return new ErrorDialog(Display.getDefault().getActiveShell()).setError(t).open();
+    }
+
+    /**
      * Displays a user and password input prompt.
      * 
      * @return {@link Window#open()}
@@ -64,5 +73,17 @@ public class Dialogs
     public static ConverterConfigurationDialog converterConfiguration()
     {
         return new ConverterConfigurationDialog(Display.getDefault().getActiveShell());
+    }
+
+    /**
+     * Displays a dialog to select a package from the given project.
+     * 
+     * @param project Selected project to browse
+     * @param path Path to the packages (e.g. 'src/test/java')
+     * @return {@link PackageBrowserDialog} instance
+     */
+    public static PackageBrowserDialog packageBrowser(IProject project, String path)
+    {
+        return new PackageBrowserDialog(Display.getDefault().getActiveShell()).setProject(project).setPath(path);
     }
 }

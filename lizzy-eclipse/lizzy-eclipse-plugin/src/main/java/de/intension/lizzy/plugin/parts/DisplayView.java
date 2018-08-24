@@ -30,7 +30,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.window.Window;
@@ -59,7 +58,6 @@ import de.intension.lizzy.plugin.provider.SecureStorageNodeProvider;
  * 
  * @author <a href="mailto:ikuba@intension.de">Ingo Kuba</a>
  */
-@SuppressWarnings("restriction")
 public class DisplayView
 {
 
@@ -69,8 +67,6 @@ public class DisplayView
     private EPartService       partService;
     @Inject
     private IEclipseContext    context;
-    @Inject
-    private Logger             logger;
 
     private Label              title;
     private Text               description;
@@ -130,7 +126,7 @@ public class DisplayView
                                     SWT.OK | SWT.ICON_INFORMATION);
                         }
                     } catch (IOException | StorageException ex) {
-                        logger.error(ex);
+                        Dialogs.error(ex);
                     }
                 }
             }

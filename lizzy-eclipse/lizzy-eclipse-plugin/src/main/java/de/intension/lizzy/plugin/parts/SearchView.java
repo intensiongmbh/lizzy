@@ -35,7 +35,6 @@ import javax.inject.Inject;
 import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.jface.window.Window;
@@ -69,7 +68,6 @@ import de.intension.lizzy.plugin.provider.SecureStorageNodeProvider;
  * 
  * @author <a href="mailto:ikuba@intension.de">Ingo Kuba</a>
  */
-@SuppressWarnings("restriction")
 public class SearchView
 {
 
@@ -80,8 +78,6 @@ public class SearchView
     private EPartService          partService;
     @Inject
     private IEclipseContext       context;
-    @Inject
-    private Logger                logger;
 
     private Text                  urlInput;
     private Text                  searchInput;
@@ -144,7 +140,7 @@ public class SearchView
                     IWebBrowser browser = support.createBrowser(null);
                     browser.openURL(new URL(url));
                 } catch (PartInitException | MalformedURLException ex) {
-                    logger.error(ex);
+                    Dialogs.error(ex);
                 }
             }
         };
@@ -223,7 +219,7 @@ public class SearchView
                     return;
                 }
             }
-            logger.error(ex);
+            Dialogs.error(ex);
         }
     }
 
