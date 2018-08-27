@@ -1,6 +1,6 @@
 <img src="src/site/resources/images/Lizzy_logo.png" alt="Lizzy">
 
-![Travis](https://api.travis-ci.com/intensiongmbh/lizzy.svg?branch=master) ![Codecov](https://codecov.io/gh/intensiongmbh/lizzy/branch/master/graph/badge.svg)
+[![CircleCI](https://circleci.com/gh/intensiongmbh/lizzy.svg?style=svg)](https://circleci.com/gh/intensiongmbh/lizzy) [![Codecov](https://codecov.io/gh/intensiongmbh/lizzy/branch/master/graph/badge.svg)](https://codecov.io/gh/intensiongmbh/lizzy)
 
 # Eclipse plugin for unit test generation for connection to ticket systems.
 
