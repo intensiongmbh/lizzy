@@ -1,15 +1,13 @@
 language: java
+jdk: oraclejdk8
+sudo: false
 
-master_build:
- stage: test
- script:
-  - mvn deploy sonar:sonar
- only:
-  - master
-
-feature_build:
- stage: test
- script:
-  - mvn verify sonar:sonar -Dsonar.analysis.mode=preview
- except:
-  - master
+install: true
+script:
+- mvn clean install
+after_success:
+- mvn cobertura:cobertura
+- bash <(curl -s https://codecov.io/bash)
+cache:
+ directories:
+ - $HOME/.m2
