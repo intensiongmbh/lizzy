@@ -1,6 +1,6 @@
 <img src="src/site/resources/images/Lizzy_logo.png" alt="Lizzy">
 
-[![CircleCI](https://circleci.com/gh/intensiongmbh/lizzy.svg?style=svg)](https://circleci.com/gh/intensiongmbh/lizzy) [![Codecov](https://codecov.io/gh/intensiongmbh/lizzy/branch/master/graph/badge.svg)](https://codecov.io/gh/intensiongmbh/lizzy)
+[![CircleCI](https://circleci.com/gh/intensiongmbh/lizzy.svg?style=svg)](https://circleci.com/gh/intensiongmbh/lizzy) [![Codecov](https://codecov.io/gh/intensiongmbh/lizzy/branch/master/graph/badge.svg)](https://codecov.io/gh/intensiongmbh/lizzy) [![Vulnerability](https://copilot.blackducksoftware.com/github/repos/intensiongmbh/lizzy/branches/master/badge-risk.svg)](https://copilot.blackducksoftware.com/github/repos/intensiongmbh/lizzy/results)
 
 # Eclipse plugin for unit test generation for connection to ticket systems.
 

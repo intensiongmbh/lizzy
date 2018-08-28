@@ -9,6 +9,13 @@ jobs:
       - run: mvn clean install
       - run: mvn cobertura:cobertura
       - run: bash <(curl -s https://codecov.io/bash)
+# dependency vulnerability check
+  vulnerability:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - deploy:
+          command: bash <(curl -s https://copilot.blackducksoftware.com/ci/circle2/scripts/upload)
 # deploy update-site to web:
   deploy:
     docker:
@@ -24,6 +31,9 @@ workflows:
   feature_build:
     jobs:
       - build
+      - vulnerability:
+          requires:
+            - build
       - deploy_approval:
           type: approval
           requires:
