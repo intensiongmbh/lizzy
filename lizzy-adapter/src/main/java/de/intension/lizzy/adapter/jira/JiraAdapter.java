@@ -89,10 +89,19 @@ public class JiraAdapter
      * @param filter Jql filter string.
      * @param maxResult Maximum number of issues to be returned.
      */
-    public List<Issue> getIssues(String filter, int maxResult)
+    public List<Issue> getIssues(String search, int maxResult)
     {
+        String filter = autocompleteMissingId(search);
         Promise<SearchResult> searchResult = getJiraClient().getSearchClient().searchJql(filter, maxResult, 0, null);
         return createIssues(searchResult.claim().getIssues());
+    }
+
+    private String autocompleteMissingId(String string)
+    {
+        if (string.matches("^([a-zA-Z]+-[0-9]+)$")) {
+            return "id=" + string;
+        }
+        return string;
     }
 
     /**
