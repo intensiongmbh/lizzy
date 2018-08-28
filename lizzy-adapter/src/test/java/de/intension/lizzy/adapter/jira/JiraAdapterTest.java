@@ -43,7 +43,7 @@ public class JiraAdapterTest
     private static final String PASSWORD     = "Password123!";
     private static final String TICKET_ID    = "LIZZY-123";
     private static final String TICKET_DESC  = "test description";
-    private static final String VALID_FILTER = "id = LIZZY-1";
+    private static final String VALID_FILTER = "id=LIZZY-1";
 
     /**
      * GIVEN Jira adapter with valid credentials
@@ -130,6 +130,24 @@ public class JiraAdapterTest
         List<Issue> issues = adapter.getIssues("id = FAIL-1", 10);
 
         assertThat(issues, iterableWithSize(0));
+    }
+
+    /**
+     * Given Jira adapter with valid credentials
+     * When requesting ticket via ticket id
+     * And 'id=' is missing
+     * Then filter gets autocompleted correctly
+     * And matching ticket gets returned
+     */
+    @Test
+    public void should_return_ticket_for_incomplete_filter_with_ticket_id()
+        throws Exception
+    {
+        JiraAdapter adapter = new JiraAdapter(URI, USERNAME, PASSWORD).setFactory(setupFactory());
+
+        List<Issue> issues = adapter.getIssues("LIZZY-1", 10);
+
+        assertThat(issues, contains(hasProperty("description", equalTo(TICKET_DESC))));
     }
 
     /**
