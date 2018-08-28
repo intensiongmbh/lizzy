@@ -193,4 +193,34 @@ public class MarkdownRemoverTest
 
         assertThat(parsed, equalTo("Heading 1Heading 2Col A1ColA2"));
     }
+
+    /**
+     * Given an empty string
+     * When attempting to parse the string
+     * Then <code>null</code> is returned
+     */
+    @Test
+    public void should_not_fail_for_empty_string()
+    {
+        String empty = "";
+
+        String parsed = MarkdownRemover.toPlainText(empty);
+
+        assertThat(parsed, equalTo(null));
+    }
+
+    /**
+     * Given a null string string
+     * When attempting to parse the string
+     * Then <code>null</code> is returned
+     */
+    @Test
+    public void should_not_fail_for_null_string()
+    {
+        String nulled = null;
+
+        String parsed = MarkdownRemover.toPlainText(nulled);
+
+        assertThat(parsed, equalTo(null));
+    }
 }

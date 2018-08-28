@@ -62,6 +62,9 @@ public class MarkdownRemover
      */
     public static String toPlainText(String string)
     {
+        if (string == null || string.isEmpty()) {
+            return null;
+        }
         Node document = PARSER.parse(string);
         TextCollectingVisitor textCollectingVisitor = new TextCollectingVisitor();
         return textCollectingVisitor.collectAndGetText(document);

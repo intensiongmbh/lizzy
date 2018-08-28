@@ -1,8 +1,8 @@
 package de.intension.lizzy.adapter;
 
 import static de.intension.lizzy.adapter.MultilineTrimmer.trim;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
@@ -97,5 +97,35 @@ public class MultilineTrimmerTest
         String trimmed = trim(string);
 
         assertThat(trimmed, equalTo("First line\nSecond line"));
+    }
+
+    /**
+     * Given an empty string
+     * When attempting to trim the string
+     * Then <code>null</code> is returned
+     */
+    @Test
+    public void should_not_fail_for_empty_string()
+    {
+        String empty = "";
+
+        String trimmed = trim(empty);
+
+        assertThat(trimmed, equalTo(null));
+    }
+
+    /**
+     * Given a null string
+     * When attempting to trim the string
+     * Then <code>null</code> is returned
+     */
+    @Test
+    public void should_not_fail_for_null_string()
+    {
+        String nulled = null;
+
+        String trimmed = trim(nulled);
+
+        assertThat(trimmed, equalTo(null));
     }
 }

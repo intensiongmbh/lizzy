@@ -35,10 +35,13 @@ public class MultilineTrimmer
      * Removes leading and trailing whitespaces from all lines.
      * 
      * @param string Multi-line text
-     * @return Formatted string
+     * @return Formatted string or null if string was empty/null.
      */
     public static String trim(String string)
     {
+        if (string == null || string.isEmpty()) {
+            return null;
+        }
         String[] lines = string.split("\n");
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < lines.length; i++) {
