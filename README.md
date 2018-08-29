@@ -6,6 +6,10 @@
 
 Lizzy is a free, open-source Eclipse plugin to generate test code from BusinessReadableDSL taken from ticket systems.
 
+## Installation
+
+Get it on <a href="https://www.intension.de/public/lizzy/latest/">this</a> updatesite and install it in Eclipse via <code>Help > Install New Software...</code>
+
 ## Project Layout
 
 ##### <a href="lizzy-adapter/">lizzy-adapter</a> - Interfaces between ticket systems and the plugin.
