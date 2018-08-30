@@ -1,6 +1,8 @@
 <img src="src/site/resources/images/Lizzy_logo.png" alt="Lizzy">
 
-[![CircleCI](https://circleci.com/gh/intensiongmbh/lizzy.svg?style=svg)](https://circleci.com/gh/intensiongmbh/lizzy) [![Codecov](https://codecov.io/gh/intensiongmbh/lizzy/branch/master/graph/badge.svg)](https://codecov.io/gh/intensiongmbh/lizzy)
+[![CircleCI](https://circleci.com/gh/intensiongmbh/lizzy.svg?style=svg)](https://circleci.com/gh/intensiongmbh/lizzy) [![Codecov](https://codecov.io/gh/intensiongmbh/lizzy/branch/master/graph/badge.svg)](https://codecov.io/gh/intensiongmbh/lizzy)<br/>
+[![Lines of code](https://sonarcloud.io/api/project_badges/measure?project=de.intension.lizzy:lizzy&metric=ncloc)](https://sonarcloud.io/dashboard?id=de.intension.lizzy:lizzy) [![Code smells](https://sonarcloud.io/api/project_badges/measure?project=de.intension.lizzy:lizzy&metric=code_smells)](https://sonarcloud.io/dashboard?id=de.intension.lizzy:lizzy) [![Security](https://sonarcloud.io/api/project_badges/measure?project=de.intension.lizzy:lizzy&metric=security_rating)](https://sonarcloud.io/dashboard?id=de.intension.lizzy:lizzy)
+
 
 # Eclipse plugin for unit test generation for connection to ticket systems.
 

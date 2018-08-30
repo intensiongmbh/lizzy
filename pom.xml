@@ -21,8 +21,8 @@
   </issueManagement>
 
   <ciManagement>
-    <system>Travis CI</system>
-    <url>https://travis-ci.com/intensiongmbh/lizzy</url>
+    <system>Circle CI</system>
+    <url>https://circleci.com/gh/intensiongmbh/lizzy</url>
   </ciManagement>
 
   <properties>
