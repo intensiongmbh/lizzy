@@ -109,8 +109,7 @@ public class JiraAdapter
      */
     private JiraRestClient getJiraClient()
     {
-        JiraRestClientFactory factory = getFactory();
-        return factory.createWithBasicHttpAuthentication(uri, username, password);
+        return getFactory().createWithBasicHttpAuthentication(uri, username, password);
     }
 
     /**

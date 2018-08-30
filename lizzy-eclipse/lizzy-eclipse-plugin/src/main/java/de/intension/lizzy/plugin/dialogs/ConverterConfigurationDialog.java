@@ -162,7 +162,7 @@ public class ConverterConfigurationDialog extends Dialog
      */
     private void requiredField(Text field)
     {
-        field.addModifyListener(new ModifyListener() {
+        field.addModifyListener(listener -> new ModifyListener() {
 
             @Override
             public void modifyText(ModifyEvent e)

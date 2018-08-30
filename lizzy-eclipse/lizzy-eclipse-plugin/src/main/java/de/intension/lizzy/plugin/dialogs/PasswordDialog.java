@@ -72,10 +72,10 @@ public class PasswordDialog extends Dialog
         }
 
         Label lblPassword = new Label(container, SWT.NONE);
-        GridData gd_lblNewLabel = new GridData(SWT.LEFT, SWT.CENTER, false,
+        GridData lblPasswordData = new GridData(SWT.LEFT, SWT.CENTER, false,
                 false, 1, 1);
-        gd_lblNewLabel.horizontalIndent = 1;
-        lblPassword.setLayoutData(gd_lblNewLabel);
+        lblPasswordData.horizontalIndent = 1;
+        lblPassword.setLayoutData(lblPasswordData);
         lblPassword.setText("Password:");
 
         txtPassword = new Text(container, SWT.BORDER | SWT.PASSWORD);

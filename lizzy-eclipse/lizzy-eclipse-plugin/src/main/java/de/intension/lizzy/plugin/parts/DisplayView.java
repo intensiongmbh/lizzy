@@ -1,13 +1,10 @@
 /*******************************************************************************
  * Copyright 2018 Intension GmbH (https://www.intension.de)
  * and other contributors as indicated by the @author tags.
- * 
  * Licensed under the Eclipse Public License - v 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *    http://www.eclipse.org/legal/epl-2.0/
- * 
+ * http://www.eclipse.org/legal/epl-2.0/
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -104,33 +101,39 @@ public class DisplayView
                 String desc = description.getText();
                 if (!desc.isEmpty()) {
                     try {
-                        ConverterConfigurationDialog dialog = Dialogs.converterConfiguration();
-                        if (dialog.open() == Window.OK) {
-                            String projectName = SecureStorageNodeProvider.get(PROJECT);
-                            if (projectName.isEmpty()) {
-                                return;
-                            }
-                            String location = dialog.getLocation();
-                            String packageName = dialog.getPackageName();
-
-                            String srcFolder = getFullPath(projectName, location);
-                            if (srcFolder == null) {
-                                message("Folder not found", "The source folder '" + location + "' does not exist.",
-                                        SWT.OK | SWT.ICON_WARNING);
-                                return;
-                            }
-
-                            GherkinConverter converter = new GherkinConverter().setPackageName(packageName).setLocation(srcFolder);
-                            converter.convert(desc);
-                            message("Generation successful", "Test class was successfully generated. Refresh your project to inspect the changes.",
-                                    SWT.OK | SWT.ICON_INFORMATION);
-                        }
+                        generateCodeDialog(desc);
                     } catch (IOException | StorageException ex) {
                         Dialogs.error(ex);
                     }
                 }
             }
         };
+    }
+
+    private void generateCodeDialog(String text)
+        throws StorageException, IOException
+    {
+        ConverterConfigurationDialog dialog = Dialogs.converterConfiguration();
+        if (dialog.open() == Window.OK) {
+            String projectName = SecureStorageNodeProvider.get(PROJECT);
+            if (projectName.isEmpty()) {
+                return;
+            }
+            String location = dialog.getLocation();
+            String packageName = dialog.getPackageName();
+
+            String srcFolder = getFullPath(projectName, location);
+            if (srcFolder == null) {
+                message("Folder not found", "The source folder '" + location + "' does not exist.",
+                        SWT.OK | SWT.ICON_WARNING);
+                return;
+            }
+
+            GherkinConverter converter = new GherkinConverter().setPackageName(packageName).setLocation(srcFolder);
+            converter.convert(text);
+            message("Generation successful", "Test class was successfully generated. Refresh your project to inspect the changes.",
+                    SWT.OK | SWT.ICON_INFORMATION);
+        }
     }
 
     private ExecuteActionListener updateFieldsListener()
