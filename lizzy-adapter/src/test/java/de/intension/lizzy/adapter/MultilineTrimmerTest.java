@@ -128,4 +128,19 @@ public class MultilineTrimmerTest
 
         assertThat(trimmed, equalTo(null));
     }
+
+    /**
+     * Given a text with a line containing only whitespaces
+     * When trimming the string
+     * Then whitespace line is completely removed
+     */
+    @Test
+    public void should_trim_line_of_whitespaces()
+    {
+        String whitespaces = "First line\n   ";
+        
+        String trimmed = trim(whitespaces);
+        
+        assertThat(trimmed, equalTo("First line\n"));
+    }
 }
