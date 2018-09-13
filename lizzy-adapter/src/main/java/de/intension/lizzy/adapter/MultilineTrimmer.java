@@ -1,13 +1,10 @@
 /*******************************************************************************
  * Copyright 2018 Intension GmbH (https://www.intension.de)
  * and other contributors as indicated by the @author tags.
- *
  * Licensed under the Eclipse Public License - v 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *    http://www.eclipse.org/legal/epl-2.0/
- *
+ * http://www.eclipse.org/legal/epl-2.0/
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -73,7 +70,7 @@ public class MultilineTrimmer
         }
         int end = string.length();
         // iterate through string from the end
-        for (int i = chars.length - 1; i > 0; i--) {
+        for (int i = chars.length - 1; i > start; i--) {
             char c = chars[i];
             if (isWhitespace(c)) {
                 end--;
@@ -90,6 +87,6 @@ public class MultilineTrimmer
      */
     private static boolean isWhitespace(char c)
     {
-        return (int)c < 33 || (int)c > 126;
+        return c < 33 || c > 126;
     }
 }
