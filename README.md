@@ -8,7 +8,7 @@ Lizzy is a free, open-source Eclipse plugin to generate test code from BusinessR
 
 ## Installation
 
-Get it on <a href="https://www.intension.de/public/lizzy/latest/">this</a> updatesite and install it in Eclipse via <code>Help > Install New Software...</code>
+Get it on <a href="https://www.intension.de/public/lizzy/main.php">this</a> updatesite and install it in Eclipse via <code>Help > Install New Software...</code>
 
 ## Project Layout
 

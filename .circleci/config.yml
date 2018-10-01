@@ -9,8 +9,8 @@ jobs:
       - run: mvn clean install
       - run: mvn cobertura:cobertura
       - run: bash <(curl -s https://codecov.io/bash)
-# deploy update-site to web:
-  deploy:
+# release update-site to web:
+  release:
     docker:
       - image: circleci/openjdk:8-jdk
     steps:
@@ -18,19 +18,37 @@ jobs:
       - run: mvn install -DskipTests=true
       - run: sudo apt-get install ncftp
       - run: ./lizzy-eclipse/lizzy-eclipse-updatesite/deployUpdatesite.sh $ftp_user $ftp_pwd
-
+# bugfix latest update-site (replace):
+  bugfix:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
+      - run: mvn install -DskipTests=true
+      - run: sudo apt-get install ncftp
+      - run: ./lizzy-eclipse/lizzy-eclipse-updatesite/deployUpdatesite.sh $ftp_user $ftp_pwd true
 workflows:
   version: 2
   feature_build:
     jobs:
       - build
-      - deploy_approval:
+      - release_approval:
           type: approval
           requires:
             - build
           filters:
             branches:
               only: master
-      - deploy:
+      - release:
           requires:
-            - deploy_approval
+            - release_approval
+      - bugfix_approval:
+          type: approval
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - bugfix:
+          requires:
+            - bugfix_approval
