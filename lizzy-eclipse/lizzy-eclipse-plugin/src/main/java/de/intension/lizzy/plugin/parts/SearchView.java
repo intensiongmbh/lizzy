@@ -1,13 +1,10 @@
 /*******************************************************************************
  * Copyright 2018 Intension GmbH (https://www.intension.de)
  * and other contributors as indicated by the @author tags.
- * 
  * Licensed under the Eclipse Public License - v 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *    http://www.eclipse.org/legal/epl-2.0/
- * 
+ * http://www.eclipse.org/legal/epl-2.0/
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,6 +23,7 @@ import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
 import static org.eclipse.e4.ui.workbench.modeling.EPartService.PartState.VISIBLE;
 
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -236,15 +234,13 @@ public class SearchView
      * @param uri URI to the ticket provider instance.
      */
     private JiraAdapter login(String uri)
-        throws Exception
+        throws StorageException, URISyntaxException
     {
         String user = SecureStorageNodeProvider.get(USER);
         String password = SecureStorageNodeProvider.get(IDENTIFICATION);
-        if (invalidCredentials || user.isEmpty() || password.isEmpty()) {
-            if (Dialogs.credentials() == Window.OK) {
-                user = SecureStorageNodeProvider.get(USER);
-                password = SecureStorageNodeProvider.get(IDENTIFICATION);
-            }
+        if ((invalidCredentials || user.isEmpty() || password.isEmpty()) && Dialogs.credentials() == Window.OK) {
+            user = SecureStorageNodeProvider.get(USER);
+            password = SecureStorageNodeProvider.get(IDENTIFICATION);
         }
         return new JiraAdapter(uri, user, password);
     }

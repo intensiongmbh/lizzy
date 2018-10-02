@@ -1,13 +1,10 @@
 /*******************************************************************************
  * Copyright 2018 Intension GmbH (https://www.intension.de)
  * and other contributors as indicated by the @author tags.
- * 
  * Licensed under the Eclipse Public License - v 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *    http://www.eclipse.org/legal/epl-2.0/
- * 
+ * http://www.eclipse.org/legal/epl-2.0/
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -92,6 +89,11 @@ import gherkin.ast.Step;
 public class GherkinGenerator
 {
 
+    private GherkinGenerator()
+    {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * Generates an object representing the java test class.
      *
@@ -134,9 +136,7 @@ public class GherkinGenerator
      */
     private static Consumer<? super Step> addJavadocTo(MethodSpec.Builder method)
     {
-        return step -> {
-            method.addJavadoc(step.getKeyword() + step.getText() + "\n");
-        };
+        return step -> method.addJavadoc(step.getKeyword() + step.getText() + "\n");
     }
 
     /**
@@ -176,7 +176,7 @@ public class GherkinGenerator
      */
     private static String decapitalize(String string)
     {
-        char c[] = string.toCharArray();
+        char[] c = string.toCharArray();
         c[0] = Character.toLowerCase(c[0]);
         return new String(c);
     }

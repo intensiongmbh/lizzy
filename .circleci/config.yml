@@ -9,6 +9,28 @@ jobs:
       - run: mvn clean install
       - run: mvn cobertura:cobertura
       - run: bash <(curl -s https://codecov.io/bash)
+      - persist_to_workspace:
+          root: /home/circleci
+          paths:
+            - project
+# sonar check (master):
+  sonar-master:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - attach_workspace:
+          at: /home/circleci
+      - run: mvn sonar:sonar -Dsonar.organization=intensiongmbh -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=f0354f995e4d215986cae370f4368c8f968c30e5
+# sonar check (feature):
+  sonar-feature:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - attach_workspace:
+          at: /home/circleci
+      - run: mkdir ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+      - run: git fetch --all; git branch -D master; git rev-parse origin/master
+      - run: mvn sonar:sonar -Dsonar.organization=intensiongmbh -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=f0354f995e4d215986cae370f4368c8f968c30e5 -Dsonar.pullrequest.branch=$CIRCLE_BRANCH -Dsonar.pullrequest.key="${CIRCLE_PULL_REQUEST##*/}" -Dsonar.pullrequest.provider=github -Dsonar.pullrequest.github.repository=intensiongmbh/lizzy -Dsonar.pullrequest.github.endpoint=https://api.github.com
 # release update-site to web:
   release:
     docker:
@@ -29,26 +51,32 @@ jobs:
       - run: ./lizzy-eclipse/lizzy-eclipse-updatesite/deployUpdatesite.sh $ftp_user $ftp_pwd true
 workflows:
   version: 2
-  feature_build:
+  maven_workflow:
     jobs:
       - build
-      - release_approval:
-          type: approval
+      - sonar-feature:
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: master
+      - sonar-master:
           requires:
             - build
           filters:
             branches:
               only: master
+      - release_approval:
+          type: approval
+          requires:
+            - sonar-master
       - release:
           requires:
             - release_approval
       - bugfix_approval:
           type: approval
           requires:
-            - build
-          filters:
-            branches:
-              only: master
+            - sonar-master
       - bugfix:
           requires:
             - bugfix_approval
