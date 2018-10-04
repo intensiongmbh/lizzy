@@ -10,8 +10,7 @@
 <body class="container">
 	<nav class="navbar navbar-expand-sm">
 		<ul class="navbar-nav">
-			<li class="nav-item"><a class="nav-link"
-				href="https://www.intension.de">HOME</a></li>
+			<li class="nav-item"><a class="nav-link" href="..">OVERVIEW</a></li>
 		</ul>
 	</nav>
 	<h1>You're close!</h1>
@@ -20,6 +19,14 @@
 		Eclipse (<a
 			href="http://help.eclipse.org/photon/index.jsp?topic=/org.eclipse.platform.doc.user/tasks/tasks-127.htm">see
 			how</a>).
+<?php
+if ($fh = fopen('release-number.txt', 'r')) {
+    $datestring = trim(fgets($fh));
+    $date = DateTime::createFromFormat('Ymd.his', $datestring)->format('jS F Y');
+    echo "<br/>This version was released on " . $date . ".";
+    fclose($fh);
+}
+?>
 	</div>
 	<img class="img-fluid" src="../eclipse-software-install.png"
 		alt="image not found">
