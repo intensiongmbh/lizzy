@@ -34,6 +34,9 @@ else
 	ncftp -u $1 -p $2 wp12720414.server-he.de <<END_SCRIPT
 	mv latest/ release-$prev/
 	mput -r latest/
+	get release-$prev/index.php
+	cd latest/
+	put index.php
 	quit
 END_SCRIPT
 fi
