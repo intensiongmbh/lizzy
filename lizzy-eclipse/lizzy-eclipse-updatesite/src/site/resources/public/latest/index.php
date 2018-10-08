@@ -22,7 +22,7 @@
 <?php
 if ($fh = fopen('release-number.txt', 'r')) {
     $datestring = trim(fgets($fh));
-    $date = DateTime::createFromFormat('Ymd.his', $datestring)->format('jS F Y');
+    $date = DateTime::createFromFormat('Ymdhi', $datestring)->format('jS F Y');
     echo "<br/>This version was released on " . $date . ".";
     fclose($fh);
 }
